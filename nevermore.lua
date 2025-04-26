@@ -5,51 +5,43 @@ local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 local Lighting = game:GetService("Lighting")
 
--- Создаем уведомление при инжекте скрипта
 StarterGui:SetCore("SendNotification", {
     Title = "neverlose.cc";
     Text = "successfully injected";
-    Icon = "rbxassetid://9182892449"; -- Указываем ID изображения
-    Duration = 5; -- Длительность уведомления в секундах
+    Icon = "rbxassetid://9182892449";
+    Duration = 5;
 })
 
--- Создаем ScreenGui
 local screenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
 
--- Создаем основную панель для функций
 local functionPanel = Instance.new("Frame", screenGui)
 functionPanel.Size = UDim2.new(0, 120, 0, 200)
-functionPanel.Position = UDim2.new(0, 10, 0, 10) -- Начальная позиция
+functionPanel.Position = UDim2.new(0, 10, 0, 10)
 functionPanel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-functionPanel.Visible = false -- Панель изначально скрыта
-functionPanel.BackgroundTransparency = 1 -- Полностью прозрачная панель
+functionPanel.Visible = false
+functionPanel.BackgroundTransparency = 1
 
--- Создаем ImageLabel для установки изображения фона
 local backgroundImage = Instance.new("ImageLabel", functionPanel)
-backgroundImage.Size = UDim2.new(1, 0, 1, 0) -- Заполняем всю панель
-backgroundImage.Image = "rbxassetid://9182892449" -- Устанавливаем изображение
-backgroundImage.BackgroundTransparency = 1 -- Делаем фон прозрачным
-backgroundImage.ImageTransparency = 0.5 -- Устанавливаем прозрачность изображения
+backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+backgroundImage.Image = "rbxassetid://9182892449"
+backgroundImage.BackgroundTransparency = 1
+backgroundImage.ImageTransparency = 0.5
 
--- Создаем объект Sound для воспроизведения музыки
 local music = Instance.new("Sound")
-music.SoundId = "rbxassetid://119911947699272" -- Устанавливаем ID вашей музыки
-music.Volume = 0.5 -- Устанавливаем громкость (от 0 до 1)
-music.Parent = functionPanel -- Привязываем звук к панели, чтобы он не удалялся
-music:Play() -- Проигрываем музыку один раз при внедрении скрипта
+music.SoundId = "rbxassetid://119911947699272"
+music.Volume = 0.5
+music.Parent = functionPanel
+music:Play()
 
--- Создаем объект Sound для проигрывания звука при нажатии кей бinda
 local espSound = Instance.new("Sound")
-espSound.SoundId = "rbxassetid://17779566040" -- Устанавливаем ID звука
-espSound.Volume = 0.5 -- Устанавливаем громкость звука
-espSound.Parent = functionPanel -- Привязываем звук к панели
+espSound.SoundId = "rbxassetid://17779566040"
+espSound.Volume = 0.5
+espSound.Parent = functionPanel
 
--- Переменные для перетаскивания
 local dragging = false
 local dragStart = nil
 local startPos = nil
 
--- Функция для начала перетаскивания
 functionPanel.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
@@ -58,7 +50,6 @@ functionPanel.InputBegan:Connect(function(input)
     end
 end)
 
--- Функция для перетаскивания
 UserInputService.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
         local delta = input.Position - dragStart
@@ -66,25 +57,21 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Функция для завершения перетаскивания
 UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = false
     end
 end)
 
--- Таблица для хранения BillboardGui для каждого игрока
 local playerGuis = {}
-local displayESP = false -- Флаг для отображения ESP
-local textColor = Color3.new(1, 1, 1) -- Цвет текста по умолчанию (белый)
-local textTransparency = 0.2 -- Прозрачность текста по умолчанию (80%)
-local espKey = Enum.KeyCode.E -- Начальный кей бинд для ESP
-local fullbrightEnabled = false -- Флаг для Fullbright
+local displayESP = false
+local textColor = Color3.new(1, 1, 1)
+local textTransparency = 0.2
+local espKey = Enum.KeyCode.E
+local fullbrightEnabled = false
 
--- Функция для обновления информации о игроках (ESP)
 local function updateESP()
     if not displayESP then 
-        -- Удаляем BillboardGui, если отображение отключено
         for player, gui in pairs(playerGuis) do
             if gui then
                 gui:Destroy()
@@ -100,11 +87,10 @@ local function updateESP()
             local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 
             if head and humanoid then
-                -- Если BillboardGui не существует, создаем его
                 if not playerGuis[player] then
                     local playerInfo = Instance.new("BillboardGui")
-                    playerInfo.Size = UDim2.new(0, 200, 0, 20) -- Уменьшаем высоту
-                    playerInfo.StudsOffset = Vector3.new(0, 5, 0) -- Перемещаем выше головы
+                    playerInfo.Size = UDim2.new(0, 200, 0, 20)
+                    playerInfo.StudsOffset = Vector3.new(0, 5, 0)
                     playerInfo.Adornee = head
                     playerInfo.AlwaysOnTop = true
 
@@ -113,40 +99,35 @@ local function updateESP()
                     textLabel.BackgroundTransparency = 1
                     textLabel.TextColor3 = textColor
                     textLabel.TextStrokeTransparency = 0.5
-                    textLabel.TextTransparency = textTransparency -- Установка прозрачности текста
+                    textLabel.TextTransparency = textTransparency
                     playerInfo.Parent = head
                     playerGuis[player] = playerInfo
                 end
 
-                -- Обновляем текст
                 local distance = (head.Position - Camera.CFrame.Position).Magnitude
                 local currentHealth = humanoid.Health
                 local maxHealth = humanoid.MaxHealth
                 local sPlusText = ""
 
-                -- Условие для отображения "maybe S+" только для игроков с maxHealth > 1600
                 if maxHealth > 1600 then
                     sPlusText = " maybe S+"
-                    playerGuis[player].TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Красный цвет для текста
+                    playerGuis[player].TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
                 else
-                    playerGuis[player].TextLabel.TextColor3 = textColor -- Основной цвет текста
+                    playerGuis[player].TextLabel.TextColor3 = textColor
                 end
 
-                -- Используем никнейм игрока из таблицы
                 local playerName = player.DisplayName or player.Name
                 playerGuis[player].TextLabel.Text = string.format("%s%s\nDis: %.2f\nHP: %d/%d", playerName, sPlusText, distance, currentHealth, maxHealth)
 
-                -- Динамическое изменение высоты текста в зависимости от расстояния
-                local dynamicTextHeight = math.clamp(1000 / distance, 10, 20) -- Максимум 20, минимум 10
+                local dynamicTextHeight = math.clamp(1000 / distance, 10, 20)
                 playerGuis[player].Size = UDim2.new(0, 200, 0, dynamicTextHeight)
                 playerGuis[player].TextLabel.Size = UDim2.new(1, 0, 1, 0)
-                playerGuis[player].TextLabel.TextTransparency = textTransparency -- Установка прозрачности текста
+                playerGuis[player].TextLabel.TextTransparency = textTransparency
             end
         end
     end
 end
 
--- Создаем чекбокс для включения/выключения отображения ESP
 local espCheckbox = Instance.new("TextButton", functionPanel)
 espCheckbox.Size = UDim2.new(1, 0, 0, 30)
 espCheckbox.Position = UDim2.new(0, 0, 0, 10)
@@ -155,13 +136,11 @@ espCheckbox.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 espCheckbox.TextColor3 = Color3.new(1, 1, 1)
 espCheckbox.TextStrokeTransparency = 0.5
 
--- Обработчик нажатия на чекбокс для включения/выключения отображения ESP
 espCheckbox.MouseButton1Click:Connect(function()
     displayESP = not displayESP
     espCheckbox.Text = displayESP and "ESP: On" or "ESP: Off"
     espCheckbox.BackgroundColor3 = displayESP and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
     if not displayESP then
-        -- Удаляем все BillboardGui, если отображение отключено
         for player, gui in pairs(playerGuis) do
             if gui then
                 gui:Destroy()
@@ -171,7 +150,6 @@ espCheckbox.MouseButton1Click:Connect(function()
     end
 end)
 
--- Создаем кнопку для установки нового кей бинда
 local bindButton = Instance.new("TextButton", functionPanel)
 bindButton.Size = UDim2.new(1, 0, 0, 30)
 bindButton.Position = UDim2.new(0, 0, 0, 50)
@@ -180,16 +158,13 @@ bindButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 bindButton.TextColor3 = Color3.new(1, 1, 1)
 bindButton.TextStrokeTransparency = 0.5
 
--- Переменная для ожидания нажатия клавиши
 local waitingForKey = false
 
--- Обработчик нажатия на кнопку для установки нового кей бинда
 bindButton.MouseButton1Click:Connect(function()
     waitingForKey = true
     bindButton.Text = "Press any key..."
 end)
 
--- Обработчик нажатия клавиши для изменения бинда
 UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     if not gameProcessedEvent and waitingForKey then
         espKey = input.KeyCode
@@ -199,12 +174,9 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
         displayESP = not displayESP
         espCheckbox.Text = displayESP and "ESP: On" or "ESP: Off"
         espCheckbox.BackgroundColor3 = displayESP and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
-        
-        -- Воспроизводим звук при нажатии на кей бинд
         espSound:Play()
 
         if not displayESP then
-            -- Удаляем все BillboardGui, если отображение отключено
             for player, gui in pairs(playerGuis) do
                 if gui then
                     gui:Destroy()
@@ -213,22 +185,19 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             end
         end
     elseif not gameProcessedEvent and input.KeyCode == Enum.KeyCode.Insert then
-        -- Переключение видимости панели при нажатии клавиши Insert
         functionPanel.Visible = not functionPanel.Visible
         
-        -- Анимация появления/исчезновения панели
         if functionPanel.Visible then
-            functionPanel.BackgroundTransparency = 1 -- Устанавливаем начальную прозрачность
-            functionPanel:TweenSize(UDim2.new(0, 120, 0, 200), "Out", "Quad", 0.5, true) -- Плавное появление
-            functionPanel:TweenTransparency(0, "Out", "Quad", 0.5, true) -- Плавное изменение прозрачности
+            functionPanel.BackgroundTransparency = 1
+            functionPanel:TweenSize(UDim2.new(0, 120, 0, 200), "Out", "Quad", 0.5, true)
+            functionPanel:TweenTransparency(0, "Out", "Quad", 0.5, true)
         else
-            functionPanel:TweenTransparency(1, "In", "Quad", 0.5, true) -- Плавное исчезновение
-            functionPanel:TweenSize(UDim2.new(0, 120, 0, 0), "In", "Quad", 0.5, true) -- Плавное уменьшение размера
+            functionPanel:TweenTransparency(1, "In", "Quad", 0.5, true)
+            functionPanel:TweenSize(UDim2.new(0, 120, 0, 0), "In", "Quad", 0.5, true)
         end
     end
 end)
 
--- Создаем кнопку для включения/выключения Fullbright
 local fullbrightButton = Instance.new("TextButton", functionPanel)
 fullbrightButton.Size = UDim2.new(1, 0, 0, 30)
 fullbrightButton.Position = UDim2.new(0, 0, 0, 90)
@@ -237,27 +206,23 @@ fullbrightButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 fullbrightButton.TextColor3 = Color3.new(1, 1, 1)
 fullbrightButton.TextStrokeTransparency = 0.5
 
--- Обработчик нажатия на кнопку для включения/выключения Fullbright
 fullbrightButton.MouseButton1Click:Connect(function()
     fullbrightEnabled = not fullbrightEnabled
     fullbrightButton.Text = fullbrightEnabled and "Fullbright: On" or "Fullbright: Off"
     fullbrightButton.BackgroundColor3 = fullbrightEnabled and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
 
     if fullbrightEnabled then
-        -- Устанавливаем параметры освещения для Fullbright
-        Lighting.Brightness = 2 -- Увеличиваем яркость
-        Lighting.OutdoorAmbient = Color3.new(1, 1, 1) -- Устанавливаем цвет освещения
-        Lighting.Ambient = Color3.new(1, 1, 1) -- Устанавливаем цвет окружения
+        Lighting.Brightness = 2
+        Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+        Lighting.Ambient = Color3.new(1, 1, 1)
     else
-        -- Возвращаем параметры освещения к нормальным значениям
-        Lighting.Brightness = 1 -- Устанавливаем стандартную яркость
-        Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5) -- Возвращаем цвет освещения
-        Lighting.Ambient = Color3.new(0.5, 0.5, 0.5) -- Возвращаем цвет окружения
+        Lighting.Brightness = 1
+        Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+        Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
     end
 end)
 
--- Основной цикл
 while true do
-    wait(0.1) -- Задержка для оптимизации
-    updateESP() -- Обновляем информацию о игроках (ESP)
+    wait(0.1)
+    updateESP()
 end
